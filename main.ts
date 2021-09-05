@@ -9,15 +9,29 @@ let coords: number[] = [0,0]
 let direction:number, facing:number
 let isPlaced:boolean = false
 
+function validateInput(input:string){
+    let coords:number[] = input.replace(/place /g, "").split(',', 2).map(function(coord){
+        return parseInt(coord,10)
+    })
 
+    let isValid:boolean=false
 
+    coords.map((coord)=>{
+        if(coord<5&&coord>0) isValid=true
+    })
+
+    return isValid
+
+}
 
 
 function getCoords(input:string){
 
-    const coords:number[] = input.replace(/place /g, "").split(',', 2).map(function(coord){
+    let coords:number[] = input.replace(/place /g, "").split(',', 2).map(function(coord){
         return parseInt(coord,10)
     })
+
+
     return coords
 }
 
@@ -44,7 +58,7 @@ function moveCommand(location:number[], facing:number){
 
 
     switch(facing){
-        case 360: if(newLocation[1]!==5){
+        case 360: if(newLocation[1]<4){
             newLocation = [x, y+=1]
         }
         break;
@@ -56,7 +70,7 @@ function moveCommand(location:number[], facing:number){
             newLocation = [x-=1, y]
         }
         break;
-        case 90: if(newLocation[0]!==5){
+        case 90: if(newLocation[0]<4){
         newLocation = [x+=1, y]
         }
         break;
@@ -88,10 +102,12 @@ rl.prompt();
 rl.on('line', (input:string) => {
     
     if(input.includes('place')){
-        input="place 1,2,east"
-        coords = getCoords(input)
-        direction = getDirection(input)
-        isPlaced=true
+        let validInput:boolean=validateInput(input)
+        if(validInput){
+            coords = getCoords(input)
+            direction = getDirection(input)
+            isPlaced=true
+        }
     }
 
     if(input === 'move' && isPlaced===true){
@@ -122,7 +138,7 @@ rl.on('line', (input:string) => {
         direction = newDirection
     }
 
-
+    else{}
 
     rl.prompt();
 })
